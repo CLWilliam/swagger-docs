@@ -1,14 +1,115 @@
 openapi: 3.0.2
 info:
-  title: FastAPI
-  version: 0.1.0
+  title: Waterleau Working Hours API
+  description: >-
+    The working hours API combined data about working and non-working hours,
+    both planned and actuals.
+
+    Planned working & non-working hour data originates from Syncore,the HR time
+    registration system.
+
+    The actual (non-)working hours originate from the SAP timesheet
+    registrations.
+
+
+    ## Syncore Planned Hours
+
+    All Belgian workers request non-working hours (e.g. holidays, recuperation
+    days) in Syncore.
+
+    Combined with expected working schedule (e.g. part-time, full-time), the
+    working and non-working hours are estimated.
+
+    Non-working hours should be requested beforehand, but can be modified after
+    the actual date.
+
+    In normal circumstances these hours are non-changing by the end of the month
+    for payroll purposes.
+
+    Only in rare cases corrections are applied after the end of the month.
+
+
+    ## SAP Actual Hours
+
+    Actual working and non-working hours are entered by each employee into the
+    SAP timesheet system.
+
+    Employees are encouraged to fill in the actuals on a weekly basis,
+
+    but are required to enter the hours on before closing of the month.
+
+
+    ## Data overview
+
+    ### Att./Absence Type
+
+    - Office: 0800
+
+    - Site: 0801
+
+    - Meeting: 0802
+
+    - Travel: 0803
+
+    - Training: 0804
+
+    - Syncore: 0805
+
+
+    ### Activity & Activity Type
+
+    - Sales: 0010
+
+    - Sr. Management: 0020
+
+    - Project Management: 0030
+
+    - Administration: 0040
+
+    - Project Engineer: 0050
+
+    - CAD: 0060
+
+    - Process Engineer: 0070
+
+    - Electrical Engineer: 0080
+
+    - Automation: 0090
+
+    - Site Technician: 0100
+
+    - Foreign CAD: 0110
+
+    - Foreign Civil: 0120
+
+    - Foreign Electrical: 0130
+
+    - Foreign Automation: 0140
+
+    - Foreign EM Site Supervision: 0150
+
+    - Foreign Process: 0160
+
+
+
+    ### Receiver Cost Center
+
+    The code is built as following:
+
+    - XXXXYYYYYY (e.g. 2510000001)
+      - The first 4 digits contain the company code (e.g. 2510 for wespelaar office)
+      - The following 6 digits are a sequence number (e.g. 000001 for WTL Group NV)
+        - Numbers 1 to 24 contain the general country cost centers
+        - Numbers in the 1000's and 2000's general contain different overhead costcenters
+  version: Beta 0.2.0
 paths:
   /api/working-hours/syncore/{aggregation}/{start_date}/{end_date}:
     get:
       tags:
         - Syncore API
       summary: Syncore Records Daterange
-      operationId: syncore_records_daterange_api_working_hours_syncore__aggregation___start_date___end_date__get
+      operationId: >-
+        syncore_records_daterange_api_working_hours_syncore__aggregation___start_date___end_date__get
       parameters:
         - required: true
           schema:
@@ -35,7 +136,9 @@ paths:
           content:
             application/json:
               schema:
-                title: Response Syncore Records Daterange Api Working Hours Syncore  Aggregation   Start Date   End Date  Get
+                title: >-
+                  Response Syncore Records Daterange Api Working Hours Syncore 
+                  Aggregation   Start Date   End Date  Get
                 type: array
                 items:
                   $ref: '#/components/schemas/SyncoreRecord'
@@ -50,7 +153,8 @@ paths:
       tags:
         - Syncore API
       summary: Syncore Records Startdate
-      operationId: syncore_records_startdate_api_working_hours_syncore__aggregation___start_date__get
+      operationId: >-
+        syncore_records_startdate_api_working_hours_syncore__aggregation___start_date__get
       parameters:
         - required: true
           schema:
@@ -70,7 +174,9 @@ paths:
           content:
             application/json:
               schema:
-                title: Response Syncore Records Startdate Api Working Hours Syncore  Aggregation   Start Date  Get
+                title: >-
+                  Response Syncore Records Startdate Api Working Hours Syncore 
+                  Aggregation   Start Date  Get
                 type: array
                 items:
                   $ref: '#/components/schemas/SyncoreRecord'
@@ -85,7 +191,8 @@ paths:
       tags:
         - SAP Timesheet API
       summary: Timesheet Records Startdate
-      operationId: timesheet_records_startdate_api_working_hours_timesheet__aggregation___start_date__get
+      operationId: >-
+        timesheet_records_startdate_api_working_hours_timesheet__aggregation___start_date__get
       parameters:
         - required: true
           schema:
@@ -105,7 +212,9 @@ paths:
           content:
             application/json:
               schema:
-                title: Response Timesheet Records Startdate Api Working Hours Timesheet  Aggregation   Start Date  Get
+                title: >-
+                  Response Timesheet Records Startdate Api Working Hours
+                  Timesheet  Aggregation   Start Date  Get
                 type: array
                 items:
                   $ref: '#/components/schemas/TimesheetRecord'
@@ -120,7 +229,8 @@ paths:
       tags:
         - SAP Timesheet API
       summary: Timesheet Records Startdate
-      operationId: timesheet_records_startdate_api_working_hours_timesheet__aggregation___start_date___end_date__get
+      operationId: >-
+        timesheet_records_startdate_api_working_hours_timesheet__aggregation___start_date___end_date__get
       parameters:
         - required: true
           schema:
@@ -147,10 +257,90 @@ paths:
           content:
             application/json:
               schema:
-                title: Response Timesheet Records Startdate Api Working Hours Timesheet  Aggregation   Start Date   End Date  Get
+                title: >-
+                  Response Timesheet Records Startdate Api Working Hours
+                  Timesheet  Aggregation   Start Date   End Date  Get
                 type: array
                 items:
                   $ref: '#/components/schemas/TimesheetRecord'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/working-hours/project-data/projects:
+    get:
+      tags:
+        - SAP Project Data API
+      summary: Projects
+      operationId: projects_api_working_hours_project_data_projects_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Projects Api Working Hours Project Data Projects Get
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/SapProject'
+  /api/working-hours/project-data/budget/{sap_project_id}:
+    get:
+      tags:
+        - SAP Project Data API
+      summary: Budgets
+      operationId: budgets_api_working_hours_project_data_budget__sap_project_id__get
+      parameters:
+        - required: true
+          schema:
+            title: Sap Project Id
+            type: string
+          name: sap_project_id
+          in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: >-
+                  Response Budgets Api Working Hours Project Data Budget  Sap
+                  Project Id  Get
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/SapProjectBudget'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/working-hours/project-data/partners/{sap_project_id}:
+    get:
+      tags:
+        - SAP Project Data API
+      summary: Budgets
+      operationId: budgets_api_working_hours_project_data_partners__sap_project_id__get
+      parameters:
+        - required: true
+          schema:
+            title: Sap Project Id
+            type: string
+          name: sap_project_id
+          in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: >-
+                  Response Budgets Api Working Hours Project Data Partners  Sap
+                  Project Id  Get
+                type: array
+                items:
+                  $ref: '#/components/schemas/SapProjectPartner'
         '422':
           description: Validation Error
           content:
@@ -163,7 +353,6 @@ components:
       title: AggregationChoices
       enum:
         - DAILY
-        - WEEKLY
       type: string
       description: An enumeration.
     HTTPValidationError:
@@ -175,6 +364,61 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ValidationError'
+    SapProject:
+      title: SapProject
+      required:
+        - creation_date
+      type: object
+      properties:
+        creation_date:
+          title: Creation Date
+          type: string
+          format: date
+        description:
+          title: Description
+          type: string
+        change_date:
+          title: Change Date
+          type: string
+          format: date
+    SapProjectBudget:
+      title: SapProjectBudget
+      required:
+        - wbs_description
+        - wbs_budget
+        - transaction_currency
+      type: object
+      properties:
+        wbs_description:
+          title: Wbs Description
+          type: string
+        wbs_budget:
+          title: Wbs Budget
+          type: number
+        transaction_currency:
+          title: Transaction Currency
+          type: string
+    SapProjectPartner:
+      title: SapProjectPartner
+      required:
+        - function
+        - id
+        - function_description
+        - name
+      type: object
+      properties:
+        function:
+          title: Function
+          type: string
+        id:
+          title: Id
+          type: string
+        function_description:
+          title: Function Description
+          type: string
+        name:
+          title: Name
+          type: string
     SyncoreRecord:
       title: SyncoreRecord
       required:
@@ -200,7 +444,7 @@ components:
           type: string
         week_of_year:
           title: Week Of Year
-          type: string
+          type: integer
         expected_hours:
           title: Expected Hours
           type: number
@@ -230,7 +474,7 @@ components:
           format: date
         company_code:
           title: Company Code
-          type: string
+          type: integer
         network:
           title: Network
           type: string
@@ -242,7 +486,7 @@ components:
           type: string
         activity:
           title: Activity
-          type: string
+          type: integer
         recorded_hours:
           title: Recorded Hours
           type: number
